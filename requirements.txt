@@ -1,7 +1,7 @@
 streamlit
 pandas
-feedparser
+feedparser==6.0.11
 beautifulsoup4
 requests
 plotly
-feedparser==6.0.11
+lxml
