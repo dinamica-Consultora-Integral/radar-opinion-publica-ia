@@ -4,3 +4,4 @@ feedparser
 beautifulsoup4
 requests
 plotly
+feedparser==6.0.11
