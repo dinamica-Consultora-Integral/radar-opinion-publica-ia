@@ -85,19 +85,16 @@ def init():
 
 
 def seed():
-    if q("SELECT COUNT(*) FROM clientes", fetch=True)[0][0] == 0:
-        for nombre in ["Municipalidad de Morteros", "Municipalidad de Brinkmann", "Municipalidad de Suardi"]:
-            q("INSERT INTO clientes(nombre,descripcion,activo,fecha_creacion) VALUES(?,?,?,?)", (nombre, "Cliente inicial", "Si", ahora()))
-    if q("SELECT COUNT(*) FROM usuarios", fetch=True)[0][0] == 0:
-        base = [("admin","1234","Todos","super_admin"),("morteros","1111","Municipalidad de Morteros","cliente"),("brinkmann","2222","Municipalidad de Brinkmann","cliente"),("suardi","3333","Municipalidad de Suardi","cliente")]
-        for u,p,c,r in base:
-            q("INSERT INTO usuarios(usuario,password,cliente,rol,activo,fecha_creacion) VALUES(?,?,?,?,?,?)", (u,p,c,r,"Si",ahora()))
+    # Sistema limpio: solo super admin inicial.
+    # Clientes, usuarios, palabras clave y perfiles se cargan desde Administración.
+    try:
+        total = q("SELECT COUNT(*) FROM usuarios", fetch=True)[0][0]
+    except Exception:
+        total = 0
+    if total == 0:
+        q("INSERT INTO usuarios(usuario,password,cliente,rol,activo,fecha_creacion) VALUES(?,?,?,?,?,?)",
+          ("admin", "1234", "Todos", "super_admin", "Si", ahora()))
 
-init(); seed()
-
-# ================= MULTICLIENTE =================
-def cliente_login():
-    return st.session_state.get("cliente", "Todos")
 
 def rol_login():
     return st.session_state.get("rol", "cliente")
@@ -221,9 +218,7 @@ if not st.session_state.login:
                 st.error("Usuario o contraseña incorrectos.")
         with st.expander("Usuarios iniciales"):
             st.write("admin / 1234")
-            st.write("morteros / 1111")
-            st.write("brinkmann / 2222")
-            st.write("suardi / 3333")
+            
     st.stop()
 
 # ================= SIDEBAR =================
